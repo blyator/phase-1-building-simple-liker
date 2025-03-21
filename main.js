@@ -2,19 +2,36 @@
 const EMPTY_HEART = "♡";
 const FULL_HEART = "♥";
 
+const errorModal = document.getElementById("modal");
+const errorMessage = document.getElementById("modal-message");
+
+function handleHeartClick(event) {
+  const heart = event.target;
+
+  mimicServerCall()
+    .then(() => {
+      if (heart.innerText === EMPTY_HEART) {
+        heart.innerText = FULL_HEART;
+        heart.classList.add("activated-heart");
+      } else {
+        heart.innerText = EMPTY_HEART;
+        heart.classList.remove("activated-heart");
+      }
+    })
+    .catch((error) => {
+      errorMessage.innerText = error;
+      errorModal.classList.remove("hidden");
+
+      setTimeout(() => {
+        errorModal.classList.add("hidden");
+      }, 3000);
+    });
+}
+
 document.querySelectorAll(".like-glyph").forEach((heart) => {
-  heart.addEventListener("click", function () {
-    mimicServerCall()
-      .then(() => {
-        heart.innerText =
-          heart.innerText === EMPTY_HEART ? FULL_HEART : EMPTY_HEART;
-        heart.style.color = heart.innerText === FULL_HEART ? "green" : "black";
-      })
-      .catch(() => alert("Server error! Try again."));
-  });
+  heart.addEventListener("click", handleHeartClick);
 });
 
-//------------------------------------------------------------------------------
 // Don't change the code below: this function mocks the server response
 //------------------------------------------------------------------------------
 
